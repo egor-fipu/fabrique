@@ -6,7 +6,7 @@ User = get_user_model()
 TYPES = (
     ('Text', 'Текстовый вопрос'),
     ('One_choice', 'С одним вариантом ответа'),
-    ('Many_choice', 'С несколькими вариантами ответа'),
+    ('Many_choices', 'С несколькими вариантами ответа'),
 )
 
 
@@ -23,7 +23,7 @@ class Poll(models.Model):
 
 class Question(models.Model):
     text = models.TextField()
-    type = models.CharField(max_length=11, choices=TYPES)
+    type = models.CharField(max_length=12, choices=TYPES)
     poll = models.ForeignKey(
         Poll,
         on_delete=models.CASCADE,

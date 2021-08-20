@@ -46,7 +46,7 @@ GET-запрос на адрес /api/polls/<poll_id>/
         },
         {
             "id": 2,
-            "type": "Many_choice",
+            "type": "Many_choices",
             "text": "Второй вопрос",
             "choices": [
                 {
@@ -129,7 +129,7 @@ GET-запрос на адрес /api/users/polls/<poll_id>/
         },
         {
             "id": 2,
-            "type": "Many_choice",
+            "type": "Many_choices",
             "text": "Второй вопрос",
             "choices": [
                 {
@@ -156,19 +156,19 @@ POST-запрос на адрес /api/users/tests/
 ```
 {
     "id_user": 111,
-    "poll": 1,
+    "poll": <poll_id>,
     "answers": [
         {
-            "question": 1,
+            "question": <question_id>,
             "text": "Ответ"
         },
         {
-            "question": 2,
-            "choice_id": [1,2]
+            "question": <question_id>,
+            "choice_id": [<choice_id>,<choice_id>]
         },
         {
-            "question": 3,
-            "choice_id": [4]
+            "question": <question_id>,
+            "choice_id": [<choice_id>]
         },
         ...
     ]
@@ -191,7 +191,7 @@ GET-запрос на адрес /api/users/tests/?user=<id_user>
                 "text": "Ответ"
             },
             {
-                "question": "Второй вопрос (Many_choice)",
+                "question": "Второй вопрос (Many_choices)",
                 "choice": [
                     "id:1, Первый вариант ответа",
                     "id:2, Второй вариант ответа"

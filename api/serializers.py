@@ -122,20 +122,27 @@ class UserTestSerializer(serializers.ModelSerializer):
                     f'В вопросе id {answer["question"].id} с типом "Text" '
                     f'введите текст ответа!'
                 )
+            if ((answer['question'].type == 'One_choice'
+                 or answer['question'].type == 'Many_choices')
+                    and ('choice_id' not in answer)):
+                raise serializers.ValidationError(
+                    f'В вопросе id {answer["question"].id} с типом '
+                    f'{answer["question"].type} должны быть варианты ответа!'
+                )
             if (answer['question'].type == 'One_choice'
                     and len(answer['choice_id']) != 1):
                 raise serializers.ValidationError(
                     f'В вопросе id {answer["question"].id} с типом '
                     f'"One_choice" должен быть один вариант ответа!'
                 )
-            if (answer['question'].type == 'Many_choice'
+            if (answer['question'].type == 'Many_choices'
                     and len(answer['choice_id']) < 2):
                 raise serializers.ValidationError(
                     f'В вопросе id {answer["question"].id} с типом '
-                    f'"Many_choice" должен быть больше одного варианта ответа!'
+                    f'"Many_choices" должен быть больше одного варианта ответа!'
                 )
             if ((answer['question'].type == 'One_choice'
-                 or answer['question'].type == 'Many_choice')
+                 or answer['question'].type == 'Many_choices')
                     and ('text' in answer)):
                 raise serializers.ValidationError(
                     f'В вопросе id {answer["question"].id} с типом '

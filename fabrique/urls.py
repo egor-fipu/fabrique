@@ -9,7 +9,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Fabrique API",
         default_version='v1',
-        description="Документация для приложения api проекта проекта Fabrique",
+        description="Документация для приложения api проекта Fabrique",
         contact=openapi.Contact(email="egor-fipu@yandex.ru"),
     ),
     public=True,

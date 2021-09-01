@@ -41,8 +41,15 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Poll
-        fields = ('id', 'is_active', 'start_date', 'end_date', 'title',
-                  'description', 'questions')
+        fields = (
+            'id',
+            'is_active',
+            'start_date',
+            'end_date',
+            'title',
+            'description',
+            'questions'
+        )
         read_only_fields = ('start_date',)
 
     def create(self, validated_data):
@@ -67,8 +74,14 @@ class PollSerializer(serializers.ModelSerializer):
 class PollListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poll
-        fields = ('id', 'is_active', 'start_date', 'end_date', 'title',
-                  'description')
+        fields = (
+            'id',
+            'is_active',
+            'start_date',
+            'end_date',
+            'title',
+            'description'
+        )
 
 
 # Для пользователей #
@@ -139,7 +152,7 @@ class UserTestSerializer(serializers.ModelSerializer):
                     and len(answer['choice_id']) < 2):
                 raise serializers.ValidationError(
                     f'В вопросе id {answer["question"].id} с типом '
-                    f'"Many_choices" должен быть больше одного варианта ответа!'
+                    f'"Many_choices" должно быть больше одного варианта ответа!'
                 )
             if ((answer['question'].type == 'One_choice'
                  or answer['question'].type == 'Many_choices')

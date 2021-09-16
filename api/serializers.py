@@ -9,6 +9,15 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = ('id', 'text')
 
+    def validate(self, data):
+        question_id = self.context['view'].kwargs['question_id']
+        question = Question.objects.get(id=question_id)
+        if question.type == 'Text':
+            raise serializers.ValidationError(
+                'В вопросе с типом "Text" не может быть вариантов ответа!'
+            )
+        return data
+
 
 class QuestionSerializer(serializers.ModelSerializer):
     choices = ChoiceSerializer(many=True, required=False)
@@ -18,14 +27,14 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ('id', 'type', 'text', 'choices')
 
     def create(self, validated_data):
-        if 'choices' not in self.initial_data:
-            question = Question.objects.create(**validated_data)
-            return question
-        else:
+        if 'choices' in validated_data:
             choices = validated_data.pop('choices')
             question = Question.objects.create(**validated_data)
             for choice in choices:
                 Choice.objects.create(**choice, question=question)
+            return question
+        else:
+            question = Question.objects.create(**validated_data)
             return question
 
     def validate_choices(self, value):
@@ -53,14 +62,14 @@ class PollSerializer(serializers.ModelSerializer):
         read_only_fields = ('start_date',)
 
     def create(self, validated_data):
-        if 'questions' not in self.initial_data:
-            poll = Poll.objects.create(**validated_data)
-            return poll
-        else:
+        if 'questions' in validated_data:
             questions = validated_data.pop('questions')
             poll = Poll.objects.create(**validated_data)
             for question in questions:
                 Question.objects.create(**question, poll=poll)
+            return poll
+        else:
+            poll = Poll.objects.create(**validated_data)
             return poll
 
     def validate_end_date(self, value):
@@ -165,7 +174,7 @@ class UserTestSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        if 'answers' not in self.initial_data:
+        if 'answers' not in validated_data:
             raise serializers.ValidationError(
                 'Введите ответы на вопросы'
             )

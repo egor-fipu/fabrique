@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins, permissions
-from rest_framework.exceptions import APIException
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
 
+from .mixins import CreateRetrieveViewSet
 from .models import Poll, Question, Choice, Test
 from .serializers import (PollSerializer, QuestionSerializer, ChoiceSerializer,
                           PollListSerializer, UserPollSerializer,
@@ -81,38 +82,25 @@ class UserPollViewSet(viewsets.ReadOnlyModelViewSet):
         return UserPollSerializer
 
 
-class CreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                        viewsets.GenericViewSet):
-    pass
-
-
-class UserTestViewSet(CreateListViewSet):
+class UserTestViewSet(CreateRetrieveViewSet):
     """Прохождение опроса, получение пройденных опросов"""
     permission_classes = (permissions.AllowAny,)
+    lookup_field = 'id_user'
+    queryset = Test.objects.all()
 
-    def get_queryset(self):
-        id_user = self.request.query_params.get('user')
-        if id_user is not None:
-            queryset = Test.objects.filter(id_user=id_user)
-            if queryset:
-                return queryset
-            else:
-                raise APIException(
-                    f'Пользователя с <id_user> "{id_user}" не существует'
-                )
-        else:
-            raise APIException(
-                'Для получения пройденных тестов в запросе необходимо указать '
-                'id_user: http://127.0.0.1:8000/api/users/tests/?user=<id_user>'
-            )
-
-    def get_serializer_class(self):
-        if self.action == 'list':
-            return UserTestViewSerializer
-        return UserTestSerializer
+    def retrieve(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        new_queryset = queryset.filter(id_user=kwargs['id_user'])
+        serializer = self.get_serializer(new_queryset, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
             serializer.save(user=self.request.user)
         else:
             serializer.save()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return UserTestViewSerializer
+        return UserTestSerializer

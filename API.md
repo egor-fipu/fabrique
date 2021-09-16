@@ -176,7 +176,7 @@ POST-запрос на адрес /api/users/tests/
 ```
 
 ### Получение пройденных пользователем опросов
-GET-запрос на адрес /api/users/tests/?user=<id_user>
+GET-запрос на адрес /api/users/tests/<id_user>
 ```
 [
     {
@@ -207,6 +207,7 @@ GET-запрос на адрес /api/users/tests/?user=<id_user>
             },
             ...
         ]
-    }
+    },
+    ...
 ]
 ```
